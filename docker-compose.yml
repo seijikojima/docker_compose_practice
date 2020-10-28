@@ -1,0 +1,10 @@
+version: '3'
+services:
+  view:
+    build: vue/.
+    # command: npm run serve
+    volumes:
+      - .:/vue
+      # - /vue/node_modules
+    ports:
+      - "9000:80"
