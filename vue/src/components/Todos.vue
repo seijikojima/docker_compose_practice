@@ -25,7 +25,7 @@
 </template>
 
 <script>
-var endpoint_base = "http://seijikojima.com:5005"
+var endpoint_base = "http://localhost:5005"
 
 export default {
     name : "todos",

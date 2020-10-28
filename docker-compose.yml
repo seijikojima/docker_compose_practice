@@ -1,6 +1,6 @@
 version: '3'
 services:
-  view:
+  front:
     build: vue/.
     # command: npm run serve
     volumes:
@@ -8,3 +8,24 @@ services:
       # - /vue/node_modules
     ports:
       - "9000:80"
+
+  back:
+    build: node/.
+    ports:
+      - "5005:5005"
+    hostname: backend-server
+    depends_on:
+      - mongo
+
+  mongo: # this name is used on url of mongodb!
+    image: "mongo:3.6"
+    ports:
+      - "27017:27017"
+    hostname: db-server
+    volumes:
+      - db-volume:/data/db
+      # - db-config-volume:/data/configdb
+
+volumes:
+  db-volume:
+  db-config-volume:

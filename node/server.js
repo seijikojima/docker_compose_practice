@@ -22,7 +22,7 @@ const connectOption = {
 
 const dbName = "todo" 
 const colName = "todo"
-const url = "mongodb://" + "127.0.0.1/" + dbName
+const url = "mongodb://" + "mongo:27017/" + dbName // replace localhost to mongo
 
 // get todo lists
 app.get('/data', function (req, res) {
