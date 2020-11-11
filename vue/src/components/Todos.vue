@@ -21,6 +21,8 @@
             </div>
         </div>
 
+
+
     </div>
 </template>
 
@@ -48,7 +50,7 @@ export default {
     get_all_items : function(){
 
     console.log("hoge")
-      this.axios.get(endpoint_base + '/data')
+      this.axios.get(endpoint_base + '/items')
       .then(response => {
         this.items = response.data
 
@@ -61,7 +63,7 @@ export default {
     },
     add_todo : function() {
       var query = { title : this.add_title, done : false}
-      this.axios.post( endpoint_base + '/new_todo_item', query)
+      this.axios.post( endpoint_base + '/items', query)
       .then(response => {
           console.log(response);
           this.undone_items.push(query);
@@ -70,7 +72,7 @@ export default {
     done_todo : function(done_item){
         this.undone_items = this.undone_items.filter( i => i._id !== done_item._id); // filter by qyery id
         this.done_items.push(done_item) // push done item
-        this.axios.post( endpoint_base + '/done_todo_item',{ _id : done_item._id, done : true}) 
+        this.axios.put( endpoint_base + '/items' , { _id : done_item._id } ) 
         .then(response => {
           console.log(response);
           
@@ -79,7 +81,7 @@ export default {
     delete_todo : function(delete_item){
         console.log("hogehoge",delete_item);
         this.done_items = this.done_items.filter( i => i._id !== delete_item._id); // filter by id
-        this.axios.post( endpoint_base + '/delete_todo_item',{ _id : delete_item._id,})
+        this.axios.delete( endpoint_base + '/items', { data : { _id : delete_item._id,} } )
         .then(response => {
           console.log(response)
       })

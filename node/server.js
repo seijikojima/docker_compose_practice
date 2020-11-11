@@ -1,98 +1,59 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const path = require('path');
-// const moment = require("moment")
-
 const port = 5005
 const app = express()
 app.use(cors())
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'dist')));
-app.use(express.static("/public/"));
 
-const mongodb = require('mongodb')
-const MongoClient = mongodb.MongoClient
-const ObjectID = mongodb.ObjectID;
-
-const connectOption = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}
-
-const dbName = "todo" 
+collection = require( './mongo' ); // import mongo.js
+var ObjectID = require('mongodb').ObjectID;
 const colName = "todo"
-const url = "mongodb://" + "mongo:27017/" + dbName // replace localhost to mongo
 
-// get todo lists
-app.get('/data', function (req, res) {
-    console.log("get all data")
-    MongoClient.connect(url, connectOption, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db(dbName);
-        dbo.collection(colName).find().sort().toArray(function(err, result) {
-          // result = result.slice(0,100)
-          if (err) throw err;
-          res.send(result)
-          console.log(result.length)
-          db.close()
-        })
-    })
-});
-
-// new item
-app.post('/new_todo_item', function (req, res) {
-  console.log(req.body)
-  MongoClient.connect(url, connectOption, function(err, db) {
+// get all todo items
+app.get('/items', function (req, res) {
+  console.log("get all data")
+  collection(colName).find().sort().toArray(function(err, result) {
     if (err) throw err;
-    var dbo = db.db(dbName);
-    var query = req.body;
-    console.log(query)
-    dbo.collection(colName).insertOne(query, function(err, result) {
-      if (err) throw err;
-      console.log("1 document inserted");
-      res.send(result.value)
-      db.close();
-    });
-  }); 
-});
+    console.log(result.length)
+    res.send(result)
+  })
+})
 
-// done todo list
-app.post('/done_todo_item', function (req, res) {
-    console.log(req.body)
-    MongoClient.connect(url, connectOption, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db(dbName);
-    var query = { _id: ObjectID(req.body._id)};
-    // req.body.Last_update = moment().format("YYYY/MM/DD HH:mm:ss");
-    dbo.collection(colName)
-    .findOneAndUpdate(query, { $set: { done : true } }, {returnOriginal: false}, function(err, result) {
-      if (err) throw err;
-      db.close();
-      res.send(result.value)
-    });
-  }); 
-});
 
-// delete article
-app.post('/delete_todo_item', function (req, res) {
-  console.log("here is delete article" ,req.body._id)
-  MongoClient.connect(url, connectOption, function(err, db) {
+
+
+// add new item
+app.post('/items', function (req, res) {
+  var query = req.body;
+  console.log(query)
+  collection(colName).insertOne(query, function(err, result) {
     if (err) throw err;
-    var dbo = db.db(dbName);
-    // var query = { _id: ObjectID(req.query._id)};
-    // var query = { _id: req.query._id};
-    var query = { _id: ObjectID(req.body._id)};
-    delete req.body._id;
-    delete req.body.loading;
-    dbo.collection(colName).deleteOne(query, function(err, obj) {
-      if (err) throw err;
-      // console.log("1 document deleted");
-      console.log(obj.result.n + " document(s) deleted");
-      db.close();
-    });
-  }); 
-});
+    console.log("1 document inserted");
+    res.send(result.value)
+  });
+}); 
+
+// done todo item
+app.put('/items', function (req, res) {
+  var query = { _id: ObjectID(req.body._id)};
+  collection(colName)
+  .findOneAndUpdate(query, { $set: { done : true } }, {returnOriginal: false}, function(err, result) {
+    if (err) throw err;
+    console.log("1 document changed")
+    res.send(result.value)
+  });
+}); 
+
+// delete todo item
+app.delete('/items', function (req, res) {
+  var query = { _id: ObjectID(req.body._id)};
+  collection(colName).deleteOne(query, function(err, obj) {
+    if (err) throw err;
+    console.log(obj.result.n + " document(s) deleted");
+    res.send("1 item was deleted")
+  });
+}); 
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
