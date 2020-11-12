@@ -72,7 +72,7 @@ export default {
     done_todo : function(done_item){
         this.undone_items = this.undone_items.filter( i => i._id !== done_item._id); // filter by qyery id
         this.done_items.push(done_item) // push done item
-        this.axios.put( endpoint_base + '/items' , { _id : done_item._id } ) 
+        this.axios.put( endpoint_base + '/items/' +  done_item._id ) 
         .then(response => {
           console.log(response);
           

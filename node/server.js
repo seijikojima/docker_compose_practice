@@ -20,9 +20,6 @@ app.get('/items', function (req, res) {
   })
 })
 
-
-
-
 // add new item
 app.post('/items', function (req, res) {
   var query = req.body;
@@ -35,8 +32,8 @@ app.post('/items', function (req, res) {
 }); 
 
 // done todo item
-app.put('/items', function (req, res) {
-  var query = { _id: ObjectID(req.body._id)};
+app.put('/items/:_id', function (req, res) {
+  var query = { _id: ObjectID(req.params._id)};
   collection(colName)
   .findOneAndUpdate(query, { $set: { done : true } }, {returnOriginal: false}, function(err, result) {
     if (err) throw err;
