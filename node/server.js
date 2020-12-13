@@ -27,17 +27,24 @@ app.post('/items', function (req, res) {
   collection(colName).insertOne(query, function(err, result) {
     if (err) throw err;
     console.log("1 document inserted");
-    res.send(result.value)
+    // console.log(result)
+
+    res.send(result.insertedId)
   });
 }); 
 
 // done todo item
 app.put('/items/:_id', function (req, res) {
+  console.log("params",req.params._id)
+  // console.log("body",req.body._id) # 値が変わる
   var query = { _id: ObjectID(req.params._id)};
+  // delete req.body._id;
+  console.log(query)
   collection(colName)
   .findOneAndUpdate(query, { $set: { done : true } }, {returnOriginal: false}, function(err, result) {
     if (err) throw err;
     console.log("1 document changed")
+    console.log(result)
     res.send(result.value)
   });
 }); 

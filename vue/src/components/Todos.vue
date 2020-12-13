@@ -65,18 +65,24 @@ export default {
       var query = { title : this.add_title, done : false}
       this.axios.post( endpoint_base + '/items', query)
       .then(response => {
-          console.log(response);
+          console.log(response.data);
+          query._id = response.data;
+          console.log(query)
           this.undone_items.push(query);
       })
     },
     done_todo : function(done_item){
-        this.undone_items = this.undone_items.filter( i => i._id !== done_item._id); // filter by qyery id
-        this.done_items.push(done_item) // push done item
+
+        console.log(done_item._id)
+
         this.axios.put( endpoint_base + '/items/' +  done_item._id ) 
         .then(response => {
           console.log(response);
-          
         })
+
+        this.undone_items = this.undone_items.filter( i => i._id !== done_item._id); // filter by qyery id
+        this.done_items.push(done_item) // push done item
+        
     },
     delete_todo : function(delete_item){
         console.log("hogehoge",delete_item);
